@@ -67,7 +67,7 @@ class HungryGeeseGym:
 
         cont = len(self.obs['geese'][self.obs['index']])
         #print(cont)
-        reward, done, _ = -20, True, {}
+        reward, done, _ = -50, True, {}
         if is_valid: # Play the move
             self.obs, old_reward, done, _ = self.env.step(action.name)
             #print(self.obs)
@@ -77,10 +77,10 @@ class HungryGeeseGym:
                     reward = -5 # se perdeu
             else:
                 if(len(self.obs['geese'][self.obs['index']])>cont ):
-                    reward = (1.01**self.obs['step'])*len(self.obs['geese'][self.obs['index']]) # se comeu
+                    reward = 15 # se comeu
                 else:
                     if(len(self.obs['geese'][self.obs['index']])<cont ):
-                        reward = -(1.01**self.obs['step'])*len(self.obs['geese'][self.obs['index']]) # se comeu
+                        reward = -10 # se comeu
                         #print("Step: "+str(self.obs['step']) + " /  Perdeu tamanho... " + str(reward)+" Pontos")
                     else:
                         reward = -1 # se não fez nada
