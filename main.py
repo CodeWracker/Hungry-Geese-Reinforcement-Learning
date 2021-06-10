@@ -8,6 +8,7 @@ import random
 import numpy as np
 import pandas as pd
 from pprint import pprint
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 def get_grid_from_obs(obs,columns,rows):
         mapa = []
@@ -151,7 +152,7 @@ def get_sensors_from_grid(grid,columns,obs,last,debug):
 last = Action.SOUTH
 def agent(obs,config):
     global last
-    model = keras.models.load_model('./model')
+    model = keras.models.load_model('./data/9-6/model')
     state = get_grid_from_obs(obs,config.columns,config.rows)
     state = get_sensors_from_grid(state,config.columns,obs,last,True)
     state = np.reshape(state, [1, 7])

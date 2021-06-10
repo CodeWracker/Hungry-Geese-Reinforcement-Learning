@@ -113,7 +113,7 @@ def process_handler():
 if __name__ == '__main__':
     #freeze_support()
     processes = []
-    for i in range(4):
+    for i in range(6):
         print("Registrando processo paralelo:"+ str(i))
         processes.append(Process(target=process_handler))
 
