@@ -50,9 +50,9 @@ def train(layers_num,layer_neuron_num):
     epsilons = [] # Store the Explore/Exploit
     TEST_Episodes = 0
     env.debug = False
-    for e in range(EPISODES):
-        if(e%int(EPISODES/100) == 0):
-            print(str(layers_num)+'-'+str(layer_neuron_num)+": "+str(math.floor(100*e/EPISODES)) + "%")
+    for e in tqdm(range(EPISODES),desc = (str(layers_num)+'-'+str(layer_neuron_num)),leave = False):
+        #if(e%int(EPISODES/100) == 0):
+        #    print(str(layers_num)+'-'+str(layer_neuron_num)+": "+str(math.floor(100*e/EPISODES)) + "%")
         state = env.reset()
         state = np.reshape(state, [1, nS]) # Resize to store in memory to pass to .predict
         tot_rewards = 0
@@ -99,7 +99,6 @@ def train(layers_num,layer_neuron_num):
     df["round"] = np.array(x_values)
     fig = px.line(df, x='round', y=['Score','Epslon'])
     fig.show()
-    fig.write_html("plot.html")
     df.to_csv('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+"/modelData.csv")
     '''plt.plot(y_values,'b')
     plt.plot(eps_graph,'r')
@@ -109,7 +108,7 @@ def process_handler():
     for j in range(3,50):
         for i in range(1,10):
             train(i,j)
-        os.system('cls')
+        #os.system('cls')
 
 if __name__ == '__main__':
     #freeze_support()
