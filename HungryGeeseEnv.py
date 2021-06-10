@@ -81,6 +81,7 @@ class HungryGeeseGym:
                 else:
                     if(len(self.obs['geese'][self.obs['index']])<cont ):
                         reward = -(1.01**self.obs['step'])*len(self.obs['geese'][self.obs['index']]) # se comeu
+                        #print("Step: "+str(self.obs['step']) + " /  Perdeu tamanho... " + str(reward)+" Pontos")
                     else:
                         reward = -1 # se não fez nada
 

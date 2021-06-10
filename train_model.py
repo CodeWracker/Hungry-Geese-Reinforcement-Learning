@@ -16,9 +16,17 @@ import plotly.express as px
 from HungryGeeseEnv import *
 from DeepQNetwork import *
 
+import math
+from multiprocessing import Process
+
 def train(layers_num,layer_neuron_num):
 
-
+    try:
+        os.mkdir("./data/"+str(layers_num)+'-'+str(layer_neuron_num))
+        print("-------- Iniciando treino para o modelo com "+str(layers_num)+" Hidden Layers e com "+str(layer_neuron_num)+" Neuronios em cada Layer --------")
+    except:
+        print("Treino ja Executado anteriormente... Abortando execução")
+        return
     env = HungryGeeseGym()
 
     #Global Variables
@@ -42,7 +50,9 @@ def train(layers_num,layer_neuron_num):
     epsilons = [] # Store the Explore/Exploit
     TEST_Episodes = 0
     env.debug = False
-    for e in tqdm(range(EPISODES)):
+    for e in range(EPISODES):
+        if(e%int(EPISODES/100) == 0):
+            print(str(layers_num)+'-'+str(layer_neuron_num)+": "+str(math.floor(100*e/EPISODES)) + "%")
         state = env.reset()
         state = np.reshape(state, [1, nS]) # Resize to store in memory to pass to .predict
         tot_rewards = 0
@@ -62,10 +72,7 @@ def train(layers_num,layer_neuron_num):
             #Experience Replay
             if len(dqn.memory) > batch_size:
                 dqn.experience_replay(batch_size)
-    try:
-        os.mkdir("./data/"+str(layers_num)+'-'+str(layer_neuron_num))
-    except:
-        discount_rate
+    
     dqn.model.save('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+'/model')
     med = 0
     y_values = []
@@ -98,7 +105,22 @@ def train(layers_num,layer_neuron_num):
     plt.plot(eps_graph,'r')
     plt.show()'''
 
-for i in range(1,10):
+def process_handler():
     for j in range(3,50):
-        print("-------- Iniciando treino para o modelo com "+str(i)+" Hidden Layers e com "+str(j)+" Neuronios em cada Layer --------")
-        train(i,j)
+        for i in range(1,10):
+            train(i,j)
+        os.system('cls')
+
+if __name__ == '__main__':
+    #freeze_support()
+    processes = []
+    for i in range(4):
+        print("Registrando processo paralelo:"+ str(i))
+        processes.append(Process(target=process_handler))
+
+    for process in processes:
+        process.start()
+
+
+    for process in processes:
+        process.join()
