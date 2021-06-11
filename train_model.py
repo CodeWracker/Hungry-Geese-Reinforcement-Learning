@@ -81,7 +81,7 @@ def train(layers_num,layer_neuron_num):
     eps = 0
     aux = 0
     BATCH = 100
-    for i in range(0,len(rewards)):
+    for i in range(0,len(rewards)): #faltou a porra do +1 aqui ai ele só faz a media ate o 900...
         med+=rewards[i]
         eps+=epsilons[i]
         if i%BATCH == 0 and i != 0:
