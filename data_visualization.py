@@ -1,40 +1,54 @@
-from pandas.io.parsers import read_csv
-import plotly.express as px
-import plotly.graph_objects as go
-import pandas as pd
+%matplotlib inline
 import numpy as np
-import os
+import matplotlib.pyplot as plt
+from ipywidgets import interactive
+import seaborn as sb
+import pandas as pd
+
+from pprint import pprint
+
+df = pd.read_csv("resultados.csv",sep=',')
+print(df["Layers"][np.argmax(df["Layers"])])
+print(df["Neuronios"][np.argmax(df["Neuronios"])])
+X = np.linspace(df["Layers"][np.argmin(df["Layers"])],df["Layers"][np.argmax(df["Layers"])] ,df["Layers"][np.argmax(df["Layers"])])
+Y = np.linspace(df["Neuronios"][np.argmin(df["Neuronios"])],df["Neuronios"][np.argmax(df["Neuronios"])],df["Neuronios"][np.argmax(df["Neuronios"])]-2)
+minimo = (df["Score"][np.argmin(df["Score"])])
+maximo = (df["Score"][np.argmax(df["Score"])])
+x,y = np.meshgrid(X,Y)
 
 
-'''
-df = px.data.gapminder()
+def f(L,N,R):
+    r = []
+    for i in range(0,len(L)):
+        aux = []
+        #print(L[i])
+        #print(N[i])
+        #print(N[i])
+        for j in range(0,len(L[i])):
+            #print(L[i][j],N[i][j],R)
+            try:
+                #print("AAA")
+                aux.append(float(df.query('Layers == {} and Neuronios == {} and Round == {} '.format(L[i][j],N[i][0],R))["Score"]))
+                #print("AAA")
+            except:
+                #print("BBB")
+                aux.append(-50)
+                #print("BBB")
+            #print()
+            #print()
+        r.append(aux)
+    #print(r)
+    return np.array(r)
 
-fig = px.bar(df, x="continent", y="pop", color="continent",
-  animation_frame="year", animation_group="country", range_y=[0,4000000000])
-fig.show()'''
+def plotting(R=1):
+    z = f(x,y,R)
+    #print(z)
+    plt.figure(figsize=(15,10))
+    ax = sb.heatmap(z,vmin=minimo,vmax=maximo,cmap="RdYlGn", cbar=False, annot=True,xticklabels=X, yticklabels=Y) 
+    plt.title("Score over Rounds")
+    plt.xlabel("Layers")
+    plt.ylabel("Neuronios")
+    ax.invert_yaxis()
 
-diretorio = "./data-AntigaPontuação"
-pastas = (os.listdir(diretorio))
-df = pd.DataFrame()
-Score = []
-Neuronios = []
-Layers = []
-Rounds = []
-for pasta in pastas:
-    layers,neuronios = pasta.split('-')
-    aux_df = read_csv(diretorio+"/"+pasta+"/modelData.csv")
-    #print(aux_df)
-    for i in range(0,len(aux_df["Score"])):
-        Layers.append(layers)
-        Neuronios.append(neuronios)
-        Score.append(aux_df["Score"][i])
-        Rounds.append(i)
-    #print("a")
-
-
-df["Score"] = Score
-df["Neuronios"] = Neuronios
-df["Layers"] = Layers
-df["Round"] = Rounds
-print(df.info())
-df.to_csv("resultados.csv")
+interactive_plot = interactive(plotting,R=(0,8,1))
+interactive_plot
