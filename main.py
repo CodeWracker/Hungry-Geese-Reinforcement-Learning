@@ -152,7 +152,7 @@ def get_sensors_from_grid(grid,columns,obs,last,debug):
 last = Action.SOUTH
 def agent(obs,config):
     global last
-    model = keras.models.load_model('./data/7-5/model')
+    model = keras.models.load_model('./data/8-20/model')
     state = get_grid_from_obs(obs,config.columns,config.rows)
     state = get_sensors_from_grid(state,config.columns,obs,last,True)
     state = np.reshape(state, [1, 7])
@@ -171,6 +171,6 @@ env1 = make("hungry_geese", debug=False) #set debug to True to see agent interna
 env1.reset()
 op1 = [agent,"./submission-ralph-coward.py", "./submission-ralph-coward.py","./submission-ralph-coward.py"]
 op2 = [agent,agent,agent,agent]
-env1.run(op2)
+env1.run(op1)
 with open('./game.html','wb') as f:   # Use some reasonable temp name
     f.write(env1.render(mode="html",width=700, height=600).encode("UTF-8"))
