@@ -105,9 +105,10 @@ def train(layers_num,layer_neuron_num):
     plt.show()'''
 
 def process_handler():
-    for j in range(3,50):
-        for i in range(1,10):
-            train(i,j)
+    while True:
+        j = rand()%42 + 3
+        i = rand()%9 + 1
+        train(i,j)
         #os.system('cls')
 
 if __name__ == '__main__':
