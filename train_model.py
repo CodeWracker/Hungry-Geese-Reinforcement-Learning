@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import plotly.graph_objects as go
 import plotly.express as px
-
+import random
 
 from HungryGeeseEnv import *
 from DeepQNetwork import *
@@ -105,15 +105,21 @@ def train(layers_num,layer_neuron_num):
     plt.show()'''
 
 def process_handler():
+    arqs = []
+    for i in range(1,10):
+        for j in range(3,45):
+            arqs.append([i,j])
     while True:
-        j = rand()%42 + 3
-        i = rand()%9 + 1
-        train(i,j)
+        n = int(random.random()%len(arqs))
+        train(arqs[n][0],arqs[n][1])
+        arqs.remove([arqs[n][0],arqs[n][1]])
         #os.system('cls')
+
 
 if __name__ == '__main__':
     #freeze_support()
     processes = []
+    
     for i in range(4):
         print("Registrando processo paralelo:"+ str(i))
         processes.append(Process(target=process_handler))
