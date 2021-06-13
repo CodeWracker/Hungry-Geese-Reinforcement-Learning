@@ -44,7 +44,7 @@ def plotting(R=1):
     z = f(x,y,R)
     #print(z)
     plt.figure(figsize=(15,10))
-    ax = sb.heatmap(z,vmin=minimo,vmax=maximo,cmap="RdYlGn", cbar=False, annot=True,xticklabels=X, yticklabels=Y) 
+    ax = sb.heatmap(z,vmin=minimo,vmax=maximo,cmap="RdYlGn",annot=True,xticklabels=X, yticklabels=Y) 
     plt.title("Score over Rounds")
     plt.xlabel("Layers")
     plt.ylabel("Neuronios")
