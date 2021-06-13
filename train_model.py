@@ -110,7 +110,7 @@ def process_handler():
         for j in range(3,45):
             arqs.append([i,j])
     while True:
-        n = int(random.random()%len(arqs))
+        n = int(1000*random.random()%len(arqs))
         train(arqs[n][0],arqs[n][1])
         arqs.remove([arqs[n][0],arqs[n][1]])
         #os.system('cls')
