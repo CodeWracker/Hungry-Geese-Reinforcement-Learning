@@ -24,6 +24,7 @@ for pasta in pastas:
     try:
       aux_df = read_csv(diretorio+"/"+pasta+"/modelData.csv")
     except:
+      print(pasta)
       continue
     #print(aux_df)
     for i in range(0,len(aux_df["Score"])):
