@@ -152,7 +152,7 @@ def get_sensors_from_grid(grid,columns,obs,last,debug):
 last = Action.SOUTH
 def agent(obs,config):
     global last
-    model = keras.models.load_model('./data2/3-22/model')
+    model = keras.models.load_model('./data/8-38/model')
     state = get_grid_from_obs(obs,config.columns,config.rows)
     state = get_sensors_from_grid(state,config.columns,obs,last,True)
     state = np.reshape(state, [1, 7])
