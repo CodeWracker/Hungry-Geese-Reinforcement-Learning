@@ -30,7 +30,7 @@ def train(layers_num,layer_neuron_num):
     env = HungryGeeseGym()
 
     #Global Variables
-    EPISODES = 1000
+    EPISODES = 10000
     TRAIN_END = 0
     #Hyper Parameters
     discount_rate = 0.95 #Gamma
@@ -74,17 +74,20 @@ def train(layers_num,layer_neuron_num):
                 dqn.experience_replay(batch_size)
     
     dqn.model.save('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+'/model')
+    df0 = pd.DataFrame()
+    df0['Reward'] = np.array(rewards)
+    df0.to_csv('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+"/modelData-total.csv")
     med = 0
     y_values = []
     x_values = []
     eps_graph = []
     eps = 0
     aux = 0
-    BATCH = 100
-    for i in range(0,len(rewards)): #faltou a porra do +1 aqui ai ele só faz a media ate o 900...
+    BATCH = 10
+    for i in range(0,len(rewards)): 
         med+=rewards[i]
         eps+=epsilons[i]
-        if i%BATCH == 0 and i != 0:
+        if i%(BATCH-1) == 0 and i != 0:
             x_values.append(aux)
             aux+=1
             y_values.append(med/BATCH)
@@ -100,9 +103,7 @@ def train(layers_num,layer_neuron_num):
     fig = px.line(df, x='round', y=['Score','Epslon'])
     fig.show()
     df.to_csv('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+"/modelData.csv")
-    '''plt.plot(y_values,'b')
-    plt.plot(eps_graph,'r')
-    plt.show()'''
+    fig.write_html('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+"plot.html")
 
 def process_handler():
     arqs = []
@@ -118,15 +119,4 @@ def process_handler():
 
 if __name__ == '__main__':
     #freeze_support()
-    processes = []
-    
-    for i in range(4):
-        print("Registrando processo paralelo:"+ str(i))
-        processes.append(Process(target=process_handler))
-
-    for process in processes:
-        process.start()
-
-
-    for process in processes:
-        process.join()
+    train(7,49)

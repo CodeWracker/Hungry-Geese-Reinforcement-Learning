@@ -5,15 +5,19 @@
 
             NORTH
      WEST           EAST
+            SOUTH
 Frente = 0
 Esquerda = 3
 Direita = 1
+Tras = 2
 
             SOUTH
     EAST            WEST
+            NORTH
 Frente = 2
 Esquerda = 1
 Direita = 3
+Tras = 0
 
             EAST
     NORTH           SOUTH 

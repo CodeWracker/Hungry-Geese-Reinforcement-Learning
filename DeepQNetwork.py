@@ -23,7 +23,7 @@ class DeepQNetwork():
         
     def build_model(self,layers_num,layer_neuron_num):
         model = keras.Sequential() #linear stack of layers https://keras.io/models/sequential/
-        model.add(keras.layers.Dense(7, input_dim=self.nS, activation='relu')) #[Input]
+        model.add(keras.layers.Dense(11, input_dim=self.nS, activation='relu')) #[Input]
         for i in range(0,layers_num):
             model.add(keras.layers.Dense(layer_neuron_num, activation='relu'))
         model.add(keras.layers.Dense(self.nA, activation='linear')) #[output]

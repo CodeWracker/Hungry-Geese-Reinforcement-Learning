@@ -30,7 +30,7 @@ class HungryGeeseGym:
         # Defined Action Space(Must)
         self.action_space = spaces.Discrete(len(self.actions))
         
-        self.observation_space = spaces.Box(low=np.zeros(shape=(7,), dtype=int), high=np.zeros(shape=(7,), dtype=int)+10)
+        self.observation_space = spaces.Box(low=np.zeros(shape=(11,), dtype=int), high=np.zeros(shape=(11,), dtype=int)+10)
         
         # Tuple corresponding to the min and max possible rewards
         self.reward_range = (-10, 1000)
@@ -72,12 +72,12 @@ class HungryGeeseGym:
             self.obs, old_reward, done, _ = self.env.step(action.name)
             #print(self.obs)
             if(done):
-                reward = 10 # se ganhou
+                reward = 100 # se ganhou
                 if(self.obs['geese'][self.obs['index']] == []):
                     reward = -5 # se perdeu
             else:
                 if(len(self.obs['geese'][self.obs['index']])>cont ):
-                    reward = 15 # se comeu
+                    reward = 20 # se comeu
                 else:
                     if(len(self.obs['geese'][self.obs['index']])<cont ):
                         reward = -10 # se comeu
@@ -101,7 +101,7 @@ class HungryGeeseGym:
     def sensors(self,grid):
        
         if(len(self.obs['geese'][self.obs['index']])==0):
-            return np.array([0,0,0,0,0,0,0])
+            return np.array([0,0,0,0,0,0,0,0,0,0,0])
         px,py = row_col(self.obs['geese'][self.obs['index']][0],self.columns)
         actL = []
         for action in Action:
@@ -194,11 +194,66 @@ class HungryGeeseGym:
                 break
             else:
                 sensor_direita[0]+=1
+        
+        # Verificando as diagonais
+        tras = frente + 2
+        if(tras>=4):
+            tras-=4
+        
+        px_a,py_a = (px+    movimentos[direita][0]  + movimentos[frente][0] )  ,  (py+     movimentos[direita][1]  + movimentos[frente][1])   
+        if(px_a>6):
+            px_a = px_a - 7
+        if(py_a>10):
+            py_a = py_a - 11
+        
+        if(px_a<0):
+            px_a = 7+ px_a
+        if(py_a<0):
+            py_a = 11 + py_a
+        frente_direita = grid[px_a,py_a]
+
+        px_a,py_a =   (px+    movimentos[esquerda][0] + movimentos[frente][0] ) ,   (py+     movimentos[esquerda][1] + movimentos[frente][1])
+        if(px_a>6):
+            px_a = px_a - 7
+        if(py_a>10):
+            py_a = py_a - 11
+        
+        if(px_a<0):
+            px_a = 7+ px_a
+        if(py_a<0):
+            py_a = 11 + py_a
+        frente_esquerda = grid[px_a,py_a]
+
+        px_a,py_a =      (px+    movimentos[esquerda][0] + movimentos[tras][0]   ) ,   (py+     movimentos[esquerda][1] + movimentos[tras][1]  )
+        if(px_a>6):
+            px_a = px_a - 7
+        if(py_a>10):
+            py_a = py_a - 11
+        
+        if(px_a<0):
+            px_a = 7+ px_a
+        if(py_a<0):
+            py_a = 11 + py_a
+        tras_esqueda = grid[px_a,py_a]
+
+
+        px_a,py_a=      (px+    movimentos[direita][0]  + movimentos[tras][0]   ) ,   (py+     movimentos[direita][1]  + movimentos[tras][1]  )
+        if(px_a>6):
+            px_a = px_a - 7
+        if(py_a>10):
+            py_a = py_a - 11
+        
+        if(px_a<0):
+            px_a = 7+ px_a
+        if(py_a<0):
+            py_a = 11 + py_a
+        tras_direita = grid[px_a,py_a]
+
         if(self.debug):
             print("x:"+str(px)+" / y:"+str(py))
             print("Frente ("+str(self.actions[frente].name) +"):"+str(sensor_frente) + " / Esquerda ("+str(self.actions[esquerda].name) +"):"+str(sensor_esquerda) + " / Direita ("+str(self.actions[direita].name) +"):"+str(sensor_direita))
             print(grid)
-        return np.array([frente,sensor_frente[0],sensor_frente[1],sensor_esquerda[0],sensor_esquerda[1],sensor_direita[0],sensor_direita[1]])
+        return np.array([frente,sensor_frente[0],sensor_frente[1],sensor_esquerda[0],sensor_esquerda[1],sensor_direita[0],sensor_direita[1],frente_direita,frente_esquerda,tras_direita,tras_esqueda])
 
     def get_grid(self,obs):
         mapa = []
