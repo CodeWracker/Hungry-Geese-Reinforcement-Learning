@@ -108,11 +108,11 @@ class HungryGeeseGym:
             actL.append(action)
         frente = 0
         if(self.last):
-            actL.remove(self.last)
             for i in range(0,len(actL)):
                 if(actL[i] == self.opposite(self.last)):
                     frente = i
                     break
+            actL.remove(self.last)
         else: # Diz que esta indo para o norte e remove o oposto (SUL)
             actL.remove(action.SOUTH)
             frente = 0

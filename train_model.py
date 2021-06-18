@@ -30,7 +30,7 @@ def train(layers_num,layer_neuron_num):
     env = HungryGeeseGym()
 
     #Global Variables
-    EPISODES = 10000
+    EPISODES = 2000
     TRAIN_END = 0
     #Hyper Parameters
     discount_rate = 0.95 #Gamma
