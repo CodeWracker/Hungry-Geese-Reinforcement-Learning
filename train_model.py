@@ -15,49 +15,49 @@ import random
 
 from HungryGeeseEnv import *
 from DeepQNetwork import *
-
+import time
 import math
 from multiprocessing import Process
+import tensorflow as tf
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+assert len(physical_devices) > 0, "Not enough GPU hardware devices available"
+config = tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
-def train(layers_num,layer_neuron_num):
+NAME = f'geese-cnn-{int(time.time())}'
+def train():
 
-    try:
-        os.mkdir("./data/"+str(layers_num)+'-'+str(layer_neuron_num))
-        print("-------- Iniciando treino para o modelo com "+str(layers_num)+" Hidden Layers e com "+str(layer_neuron_num)+" Neuronios em cada Layer --------")
-    except:
-        print("Treino ja Executado anteriormente... Abortando execução")
-        return
+    print("-------- Iniciando treino --------")
+    os.mkdir(NAME)
     env = HungryGeeseGym()
 
     #Global Variables
-    EPISODES = 2000
+    EPISODES = 1000
     TRAIN_END = 0
     #Hyper Parameters
     discount_rate = 0.95 #Gamma
-    learning_rate = 0.001 #Alpha
+    learning_rate = 0.01 #Alpha
     batch_size = 24 #Size of the batch used in the experience replay
 
     #Create the agent
-    nS = env.observation_space.shape[0]
+    nS = env.observation_space.shape[0]    
     nA = env.action_space.n
+    print(nS)
     try:
         del dqn
     except:
         discount_rate
-    dqn = DeepQNetwork(nS, nA, learning_rate, discount_rate, 1, 0.001, (0.222)*(1/(EPISODES/2)),layers_num,layer_neuron_num )
+    dqn = DeepQNetwork(nS, nA, learning_rate, discount_rate, 1, 0.001, 0.9985)
     #Training
     rewards = [] #Store rewards for graphing
     epsilons = [] # Store the Explore/Exploit
     TEST_Episodes = 0
     env.debug = False
-    for e in tqdm(range(EPISODES),desc = (str(layers_num)+'-'+str(layer_neuron_num)),leave = False):
-        #if(e%int(EPISODES/100) == 0):
-        #    print(str(layers_num)+'-'+str(layer_neuron_num)+": "+str(math.floor(100*e/EPISODES)) + "%")
+    for e in tqdm(range(EPISODES)):
         state = env.reset()
         state = np.reshape(state, [1, nS]) # Resize to store in memory to pass to .predict
         tot_rewards = 0
         for time in range(200): 
-            action = dqn.action(state)
+            action = dqn.action(state.reshape(1,7,11,1))
             nstate, reward, done, _ = env.step(action)
             nstate = np.reshape(nstate, [1, nS])
             tot_rewards += reward
@@ -72,18 +72,19 @@ def train(layers_num,layer_neuron_num):
             #Experience Replay
             if len(dqn.memory) > batch_size:
                 dqn.experience_replay(batch_size)
+        
     
-    dqn.model.save('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+'/model')
+    dqn.model.save(NAME + '/model')
     df0 = pd.DataFrame()
     df0['Reward'] = np.array(rewards)
-    df0.to_csv('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+"/modelData-total.csv")
+    df0.to_csv(NAME + '/modelData-total.csv')
     med = 0
     y_values = []
     x_values = []
     eps_graph = []
     eps = 0
     aux = 0
-    BATCH = 10
+    BATCH = 50
     for i in range(0,len(rewards)): 
         med+=rewards[i]
         eps+=epsilons[i]
@@ -102,8 +103,8 @@ def train(layers_num,layer_neuron_num):
     df["round"] = np.array(x_values)
     fig = px.line(df, x='round', y=['Score','Epslon'])
     fig.show()
-    df.to_csv('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+"/modelData.csv")
-    fig.write_html('./data/'+str(layers_num)+'-'+str(layer_neuron_num)+"plot.html")
+    df.to_csv(NAME + '/modelData.csv')
+    fig.write_html(NAME + '/plot.html')
 
 def process_handler():
     arqs = []
@@ -119,4 +120,4 @@ def process_handler():
 
 if __name__ == '__main__':
     #freeze_support()
-    train(7,49)
+    train()

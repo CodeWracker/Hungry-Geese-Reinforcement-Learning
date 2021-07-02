@@ -30,7 +30,7 @@ class HungryGeeseGym:
         # Defined Action Space(Must)
         self.action_space = spaces.Discrete(len(self.actions))
         
-        self.observation_space = spaces.Box(low=np.zeros(shape=(11,), dtype=int), high=np.zeros(shape=(11,), dtype=int)+10)
+        self.observation_space = spaces.Box(low=np.zeros(shape=(77,), dtype=int), high=np.zeros(shape=(77,), dtype=int)+10)
         
         # Tuple corresponding to the min and max possible rewards
         self.reward_range = (-10, 1000)
@@ -43,7 +43,7 @@ class HungryGeeseGym:
         
         self.obs = self.env.reset()
         #print(self.obs)
-        return self.sensors(self.get_grid(self.obs))
+        return self.get_grid(self.obs)
     
     def opposite(self,action):
         if action == Action.NORTH:
@@ -89,14 +89,14 @@ class HungryGeeseGym:
                 
         grid = self.get_grid(self.obs)
         
-        sensores = self.sensors(grid)
+        '''sensores = self.sensors(grid)
         if(self.debug):
             print(sensores.shape)
             print(sensores)
-            print(grid.reshape(1,-1)[0].shape)
+            print(grid.reshape(1,-1)[0].shape)'''
 
         # o obs tem que ser [indice da ultima ação. [sens1], [sens2], [sens3]]
-        return sensores, reward, done, _
+        return grid, reward, done, _
     
     def sensors(self,grid):
        
@@ -287,4 +287,4 @@ class HungryGeeseGym:
                     continue
                 mapa[i].append(0)
 
-        return np.array(mapa)
+        return np.array(mapa).reshape(1,-1)[0]
